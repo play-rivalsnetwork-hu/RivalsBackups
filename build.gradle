@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+group = 'hu.rivalsnetwork.rivalsbackups'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+
+    maven {
+        url = uri('https://jitpack.io/')
+    }
+}
+
+dependencies {
+    // https://mvnrepository.com/artifact/commons-io/commons-io
+    implementation 'commons-io:commons-io:2.13.0'
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-compress
+    implementation 'org.apache.commons:commons-compress:1.24.0'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'me.carleslc.Simple-YAML:Simple-Yaml:1.8.4'
+}
+
+build.dependsOn shadowJar
+
+jar {
+    manifest {
+        attributes['Main-Class'] = 'hu.rivalsnetwork.rivalsbackups.Main'
+    }
+}
