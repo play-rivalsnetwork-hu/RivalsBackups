@@ -9,6 +9,56 @@ import java.util.List;
 public class Config extends AbstractConfig {
     @Key("no-save")
     public static List<String> NO_SAVE = List.of("oreo", "boreo");
+    @Key("bot.token")
+    public static String TOKEN = "";
+    @Key("bot.guild-id")
+    public static String GUILD_ID = "";
+    @Key("backup.channel-id")
+    public static String CHANNEL_ID = "1009424038889803827";
+    @Key("backup.start.hour")
+    public static int BACKUP_HOUR = 4;
+    @Key("backup.start.minute")
+    public static int BACKUP_MINUTE = 0;
+    @Key("backup.start.second")
+    public static int BACKUP_SECOND = 0;
+    @Key("backup.server-directory")
+    public static String SERVER_DIRECTORY = "/home/daemon-data/";
+
+    @Key("backup.embed.running.color")
+    public static int BACKUP_RUNNING_COLOR = 0x03b1fc;
+    @Key("backup.embed.running.title")
+    public static String BACKUP_RUNNING_TITLE = "Backup $server - $time";
+    @Key("backup.embed.running.compressing.title")
+    public static String BACKUP_RUNNING_COMPRESSING_TITLE = "Compressing:";
+    @Key("backup.embed.running.compressing.content")
+    public static String BACKUP_RUNNING_COMPRESSING_CONTENT = "$bar (`$percent`)\nElapsed - $elapsed\nSize: $startingSize -> $finishedSize";
+    @Key("backup.embed.running.compressing.progressbar.done")
+    public static String BACKUP_RUNNING_COMPRESSING_PROGRESSBAR_DONE = "\uD83D\uDFE9";
+    @Key("backup.embed.running.compressing.progressbar.not-done")
+    public static String BACKUP_RUNNING_COMPRESSING_PROGRESSBAR_NOT_DONE = "⬜";
+    @Key("backup.embed.running.compressing.progressbar.amount")
+    @Comment("The amount of progress icons used for the progressbar")
+    public static int BACKUP_RUNNING_COMPRESSING_PROGRESSBAR_AMOUNT = 10;
+
+    @Key("backup.embed.running.uploading.title")
+    public static String BACKUP_RUNNING_UPLOADING_TITLE = "Uploading:";
+    @Key("backup.embed.running.uploading.content")
+    public static String BACKUP_RUNNING_UPLOADING_CONTENT = "$bar (`$percent`)\nElapsed - $elapsed";
+    @Key("backup.embed.running.uploading.progressbar.done")
+    public static String BACKUP_RUNNING_UPLOADING_PROGRESSBAR_DONE = "\uD83D\uDFE9";
+    @Key("backup.embed.running.uploading.progressbar.not-done")
+    public static String BACKUP_RUNNING_UPLOADING_PROGRESSBAR_NOT_DONE = "⬜";
+    @Key("backup.embed.running.uploading.progressbar.amount")
+    @Comment("The amount of progress icons used for the progressbar")
+    public static int BACKUP_RUNNING_UPLOADING_PROGRESSBAR_AMOUNT = 10;
+    @Key("backup.sftp.address")
+    public static String SFTP_ADDRESS = "";
+    @Key("backup.sftp.password")
+    public static String SFTP_PASSWORD = "";
+    @Key("backup.sftp.user")
+    public static String SFTP_USER = "";
+    @Key("backup.sftp.folder")
+    public static String SFTP_FILE = "node0/mc/$startDate/$serverName.tar.gz";
 
     public static final Config CONFIG = new Config();
 

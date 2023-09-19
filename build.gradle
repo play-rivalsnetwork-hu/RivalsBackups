@@ -19,8 +19,11 @@ dependencies {
     implementation 'commons-io:commons-io:2.13.0'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-compress
     implementation 'org.apache.commons:commons-compress:1.24.0'
+    // https://mvnrepository.com/artifact/com.jcraft/jsch
+    implementation 'com.jcraft:jsch:0.1.55'
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'me.carleslc.Simple-YAML:Simple-Yaml:1.8.4'
+    implementation 'net.dv8tion:JDA:5.0.0-beta.13'
 }
 
 build.dependsOn shadowJar

@@ -1,16 +1,21 @@
 package hu.rivalsnetwork.rivalsbackups;
 
-import hu.rivalsnetwork.rivalsbackups.compress.Compressor;
+import hu.rivalsnetwork.rivalsbackups.backup.Backup;
 import hu.rivalsnetwork.rivalsbackups.config.Config;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 
 import java.io.File;
-import java.time.LocalDateTime;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
 
 public class Main {
+    private static final List<Backup> runningBackups = new ArrayList<>();
     private static File dataFolder;
-    private static boolean running = false;
+    private static JDA jda;
 
     public static void main(String[] args) throws Exception {
         dataFolder = new File("data/");
@@ -19,31 +24,24 @@ public class Main {
         }
 
         Config.reload();
-        for (String s : Config.NO_SAVE) {
-            System.out.println(s);
-        }
 
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                LocalDateTime now = LocalDateTime.now();
-                if (now.getHour() == 19 && now.getMinute() == 28 && now.getSecond() == 0 && !running) {
-                    running = true;
+        jda = JDABuilder.createDefault(Config.TOKEN)
+                .enableIntents(EnumSet.allOf(GatewayIntent.class))
+                .setMemberCachePolicy(MemberCachePolicy.ALL)
+                .build().awaitReady();
 
-
-                }
-            }
-        }, 100, 100);
-
-
-        File file = new File("files/");
-        File output = new File("test.tar.gz");
-        Compressor compressor = new Compressor();
-        compressor.compressFile(file, output);
+        new Backup(new File("input"));
     }
 
     public static File getDataFolder() {
         return dataFolder;
+    }
+
+    public static List<Backup> getRunningBackups() {
+        return runningBackups;
+    }
+
+    public static JDA getJda() {
+        return jda;
     }
 }

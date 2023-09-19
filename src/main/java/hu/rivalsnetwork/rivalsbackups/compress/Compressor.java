@@ -1,5 +1,6 @@
 package hu.rivalsnetwork.rivalsbackups.compress;
 
+import hu.rivalsnetwork.rivalsbackups.config.Config;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 
@@ -30,8 +31,10 @@ public class Compressor {
                     Path target = path.relativize(file);
 
                     String fileName = target.toString();
-                    if (fileName.contains("CoreProtect" + File.separator + "database.db") || fileName.contains(".hprof")) {
-                        return FileVisitResult.CONTINUE;
+                    for (String s : Config.NO_SAVE) {
+                        if (fileName.contains(s)) {
+                            return FileVisitResult.CONTINUE;
+                        }
                     }
 
                     TarArchiveEntry tarArchiveEntry = new TarArchiveEntry(file.toFile(), target.toString());
