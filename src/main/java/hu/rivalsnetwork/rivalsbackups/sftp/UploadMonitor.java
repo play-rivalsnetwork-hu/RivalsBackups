@@ -18,7 +18,6 @@ public class UploadMonitor implements SftpProgressMonitor {
     public void init(int op, String src, String dest, long max) {
         this.max = max;
         backup.setStage(BackupStage.UPLOADING);
-        backup.uploadStart();
         backup.updateEmbed();
     }
 
@@ -28,7 +27,8 @@ public class UploadMonitor implements SftpProgressMonitor {
 
         int percentage = (int) ((this.transferred / (float) this.max) * 100);
 
-        if (percentage != percent + 10) {
+        if (percentage == percent + 10) {
+            System.out.println("Percent:" + percentage);
             percent = percentage;
             backup.updatePercentage(percent);
         }

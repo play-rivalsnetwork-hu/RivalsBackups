@@ -59,6 +59,8 @@ public class Config extends AbstractConfig {
     public static String SFTP_USER = "";
     @Key("backup.sftp.folder")
     public static String SFTP_FILE = "node0/mc/$startDate/$serverName.tar.gz";
+    @Key("different-interval")
+    public static List<String> DIFFERENT_SAVE_INTERVAL = List.of("5d66101e-d5b7-4e6f-8762-afe7bf1d7b20", "2404eb1d-55b8-4462-96f9-9a9b08686003", "04f67f07-d22f-4b83-988a-77400b5cf690");
 
     public static final Config CONFIG = new Config();
 

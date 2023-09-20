@@ -1,7 +1,5 @@
 package hu.rivalsnetwork.rivalsbackups.utils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.time.Duration;
 
 public class StringUtils {
@@ -13,7 +11,7 @@ public class StringUtils {
             return builder.toString();
         }
 
-        int completeBars = progress / 100 * bars;
+        int completeBars = (int) ((double) progress / 100 * bars);
         int incompleteBars = bars - completeBars;
 
         if (completeBars > 0) {

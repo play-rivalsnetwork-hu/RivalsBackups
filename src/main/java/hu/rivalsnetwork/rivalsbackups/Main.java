@@ -2,6 +2,7 @@ package hu.rivalsnetwork.rivalsbackups;
 
 import hu.rivalsnetwork.rivalsbackups.backup.Backup;
 import hu.rivalsnetwork.rivalsbackups.config.Config;
+import hu.rivalsnetwork.rivalsbackups.scheduler.BackupTimer;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -11,6 +12,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Timer;
 
 public class Main {
     private static final List<Backup> runningBackups = new ArrayList<>();
@@ -30,7 +32,7 @@ public class Main {
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .build().awaitReady();
 
-        new Backup(new File("input"));
+        new Timer().scheduleAtFixedRate(new BackupTimer(), 0, 500);
     }
 
     public static File getDataFolder() {
