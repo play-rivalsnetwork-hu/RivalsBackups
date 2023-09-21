@@ -58,7 +58,11 @@ public class Uploader {
             long daysAgo = ChronoUnit.DAYS.between(epochDate, currentDate);
 
             if (daysAgo == 10 || daysAgo == 11) {
-//                channel.rmdir("node0/mc/" + entry.getFilename());
+                Vector<ChannelSftp.LsEntry> entryV2 = channel.ls("node0/mc/" + entry.getFilename());
+                for (ChannelSftp.LsEntry lsEntry : entryV2) {
+                    channel.rm("node0/mc/" + entry.getFilename() + lsEntry.getFilename());
+                }
+                channel.rmdir("node0/mc/" + entry.getFilename());
             }
         }
     }
