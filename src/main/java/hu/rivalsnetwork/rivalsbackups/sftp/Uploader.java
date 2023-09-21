@@ -58,7 +58,7 @@ public class Uploader {
             long daysAgo = ChronoUnit.DAYS.between(epochDate, currentDate);
 
             if (daysAgo == 10 || daysAgo == 11) {
-                channel.rmdir("node0/mc/" + entry.getFilename());
+//                channel.rmdir("node0/mc/" + entry.getFilename());
             }
         }
     }

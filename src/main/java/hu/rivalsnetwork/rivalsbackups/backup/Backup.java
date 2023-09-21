@@ -42,7 +42,6 @@ public class Backup {
         startingSize = FileUtils.sizeOfDirectory(file);
         if (!isSpaceEnough()) {
             this.stage = BackupStage.OUT_OF_STORAGE;
-            System.out.println("SPACE ISN'T ENOUGH!");
         }
 
         Main.getRunningBackups().add(this);
@@ -56,7 +55,6 @@ public class Backup {
     }
 
     public void start() {
-        System.out.println("a");
         Compressor compressor = new Compressor(this);
         try {
             compressingStart = System.currentTimeMillis();
@@ -71,15 +69,12 @@ public class Backup {
         compressingProgress = 100;
         updateEmbed();
 
-        System.out.println("b");
-        System.out.println(compressedFile);
         stage = BackupStage.UPLOADING;
         // Start uploading!
-        uploadStart = System.currentTimeMillis();
         uploader = new Uploader();
         try {
             uploader.setup(this);
-            System.out.println("upla");
+            uploadStart = System.currentTimeMillis();
             uploader.upload(file.getName(), compressedFile);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -112,10 +107,6 @@ public class Backup {
         }
     }
 
-    public void startOutOfStorageTimer() {
-
-    }
-
     public void updateUploadPercentage(int percent) {
         this.uploadProgress = percent;
         updateEmbed();
@@ -135,6 +126,8 @@ public class Backup {
 
         Main.getRunningBackups().remove(this);
         uploader.close();
+        uploader = null;
+        compressedFile = null;
     }
 
     public void setStage(BackupStage stage) {
