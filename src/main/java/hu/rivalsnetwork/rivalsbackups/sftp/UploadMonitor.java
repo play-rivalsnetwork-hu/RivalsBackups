@@ -28,9 +28,8 @@ public class UploadMonitor implements SftpProgressMonitor {
         int percentage = (int) ((this.transferred / (float) this.max) * 100);
 
         if (percentage == percent + 10) {
-            System.out.println("Percent:" + percentage);
             percent = percentage;
-            backup.updatePercentage(percent);
+            backup.updateUploadPercentage(percent);
         }
 
         return true;

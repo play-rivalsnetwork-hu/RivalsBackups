@@ -1,5 +1,6 @@
 package hu.rivalsnetwork.rivalsbackups.scheduler;
 
+import hu.rivalsnetwork.rivalsbackups.Main;
 import hu.rivalsnetwork.rivalsbackups.backup.Backup;
 import hu.rivalsnetwork.rivalsbackups.config.Config;
 import hu.rivalsnetwork.rivalsbackups.sftp.Uploader;
@@ -7,19 +8,17 @@ import hu.rivalsnetwork.rivalsbackups.sftp.Uploader;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.TimerTask;
 import java.util.concurrent.Executors;
 
-public class BackupTimer extends TimerTask {
-    private boolean running = false;
+public class BackupTimer implements Runnable {
     private int i = 0;
     private LocalDateTime lastRan = LocalDateTime.now();
 
     @Override
     public void run() {
         LocalDateTime now = LocalDateTime.now();
-        if (i > 100 && running) {
-            running = false;
+        if (i > 100 && Main.running) {
+            Main.running = false;
         }
 
         if (ChronoUnit.HOURS.between(now, lastRan) == 4) {
@@ -48,9 +47,9 @@ public class BackupTimer extends TimerTask {
             }
         }
 
-        if (now.getHour() == Config.BACKUP_HOUR && now.getMinute() == Config.BACKUP_MINUTE && now.getSecond() == Config.BACKUP_SECOND && !running) {
+        if (now.getHour() == Config.BACKUP_HOUR && now.getMinute() == Config.BACKUP_MINUTE && now.getSecond() == Config.BACKUP_SECOND && !Main.running) {
             System.out.println("Starting backup!");
-            running = true;
+            Main.running = true;
 
             try {
                 Uploader uploader = new Uploader();

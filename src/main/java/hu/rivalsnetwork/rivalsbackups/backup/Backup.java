@@ -22,7 +22,7 @@ public class Backup {
     private final File file;
     private BackupStage stage;
     private Message message;
-    private long compressingTook = 0;
+    private long compressingStart = 0;
     private long uploadStart = 0;
     private int compressingProgress = 0;
     private int uploadProgress = 0;
@@ -32,6 +32,7 @@ public class Backup {
     private final LocalDateTime startDate;
     private Uploader uploader;
     private MessageCreateAction action;
+    private long compressedSize = 0;
 
     public Backup(File file, LocalDateTime startDate) {
         this.stage = BackupStage.STARTING;
@@ -41,6 +42,7 @@ public class Backup {
         startingSize = FileUtils.sizeOfDirectory(file);
         if (!isSpaceEnough()) {
             this.stage = BackupStage.OUT_OF_STORAGE;
+            System.out.println("SPACE ISN'T ENOUGH!");
         }
 
         Main.getRunningBackups().add(this);
@@ -54,10 +56,11 @@ public class Backup {
     }
 
     public void start() {
-        long compressStart = System.currentTimeMillis();
         System.out.println("a");
-        Compressor compressor = new Compressor();
+        Compressor compressor = new Compressor(this);
         try {
+            compressingStart = System.currentTimeMillis();
+            stage = BackupStage.COMPRESSING;
             compressedFile = File.createTempFile("backup", ".tar.gz");
             compressor.compressFile(file, compressedFile);
         } catch (Exception e) {
@@ -66,7 +69,6 @@ public class Backup {
         finishSize = FileUtils.sizeOf(compressedFile);
 
         compressingProgress = 100;
-        compressingTook = System.currentTimeMillis() - compressStart;
         updateEmbed();
 
         System.out.println("b");
@@ -102,8 +104,8 @@ public class Backup {
             EmbedBuilder embed = new EmbedBuilder();
             embed.setTitle(Config.BACKUP_RUNNING_TITLE.replace("$server", file.getName()).replace("$time", startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss"))));
             embed.setColor(Config.BACKUP_RUNNING_COLOR);
-            embed.addField(new MessageEmbed.Field(Config.BACKUP_RUNNING_COMPRESSING_TITLE, Config.BACKUP_RUNNING_COMPRESSING_CONTENT.replace("$progress", compressingProgress + "%").replace("$bar", StringUtils.createProgressBar(Config.BACKUP_RUNNING_COMPRESSING_PROGRESSBAR_NOT_DONE, Config.BACKUP_RUNNING_COMPRESSING_PROGRESSBAR_DONE, Config.BACKUP_RUNNING_COMPRESSING_PROGRESSBAR_AMOUNT, compressingProgress)).replace("$elapsed", StringUtils.fancyTime(compressingTook)).replace("$startingSize", String.format("%.2fGB", convertBytesToGigabytes(startingSize))).replace("$finishedSize", String.format("%.2fGB", convertBytesToGigabytes(finishSize))).replace("$percent", "100%"), false));
-            embed.addField(new MessageEmbed.Field(Config.BACKUP_RUNNING_UPLOADING_TITLE, Config.BACKUP_RUNNING_UPLOADING_CONTENT.replace("$progress", uploadProgress + "%").replace("$bar", StringUtils.createProgressBar(Config.BACKUP_RUNNING_UPLOADING_PROGRESSBAR_NOT_DONE, Config.BACKUP_RUNNING_UPLOADING_PROGRESSBAR_DONE, Config.BACKUP_RUNNING_UPLOADING_PROGRESSBAR_AMOUNT, uploadProgress)).replace("$elapsed", StringUtils.fancyTime(System.currentTimeMillis() - uploadStart)).replace("$percent", uploadProgress + "%"), false));
+            embed.addField(new MessageEmbed.Field(Config.BACKUP_RUNNING_COMPRESSING_TITLE, Config.BACKUP_RUNNING_COMPRESSING_CONTENT.replace("$progress", compressingProgress + "%").replace("$bar", StringUtils.createProgressBar(Config.BACKUP_RUNNING_COMPRESSING_PROGRESSBAR_NOT_DONE, Config.BACKUP_RUNNING_COMPRESSING_PROGRESSBAR_DONE, Config.BACKUP_RUNNING_COMPRESSING_PROGRESSBAR_AMOUNT, compressingProgress)).replace("$elapsed", StringUtils.fancyTime(System.currentTimeMillis() - compressingStart)).replace("$startingSize", String.format("%.2fGB", convertBytesToGigabytes(startingSize))).replace("$finishedSize", String.format("%.2fGB", convertBytesToGigabytes(finishSize))).replace("$percent", compressingProgress + "%"), false));
+            embed.addField(new MessageEmbed.Field(Config.BACKUP_RUNNING_UPLOADING_TITLE, Config.BACKUP_RUNNING_UPLOADING_CONTENT.replace("$progress", uploadProgress + "%").replace("$bar", StringUtils.createProgressBar(Config.BACKUP_RUNNING_UPLOADING_PROGRESSBAR_NOT_DONE, Config.BACKUP_RUNNING_UPLOADING_PROGRESSBAR_DONE, Config.BACKUP_RUNNING_UPLOADING_PROGRESSBAR_AMOUNT, uploadProgress)).replace("$elapsed", uploadStart != 0 ? StringUtils.fancyTime(System.currentTimeMillis() - uploadStart) : "00:00:00").replace("$percent", uploadProgress + "%"), false));
 
             MessageEditAction action1 =  message.editMessageEmbeds(embed.build());
             action1.setEmbeds(embed.build()).complete();
@@ -114,8 +116,13 @@ public class Backup {
 
     }
 
-    public void updatePercentage(int percent) {
+    public void updateUploadPercentage(int percent) {
         this.uploadProgress = percent;
+        updateEmbed();
+    }
+
+    public void updateCompressPercentage(int percent) {
+        this.compressingProgress = percent;
         updateEmbed();
     }
 
@@ -140,5 +147,17 @@ public class Backup {
 
     public double convertBytesToGigabytes(long bytes) {
         return bytes / (1024.0 * 1024.0 * 1024.0);
+    }
+
+    public long getCompressedSize() {
+        return compressedSize;
+    }
+
+    public long getStartingSize() {
+        return startingSize;
+    }
+
+    public void addCompressedSize(long compressedSize) {
+        this.compressedSize += compressedSize;
     }
 }

@@ -12,12 +12,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Timer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class Main {
     private static final List<Backup> runningBackups = new ArrayList<>();
     private static File dataFolder;
     private static JDA jda;
+    public static volatile boolean running = false;
 
     public static void main(String[] args) throws Exception {
         dataFolder = new File("data/");
@@ -32,7 +34,7 @@ public class Main {
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .build().awaitReady();
 
-        new Timer().scheduleAtFixedRate(new BackupTimer(), 0, 500);
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new BackupTimer(), 0, 1, TimeUnit.SECONDS);
     }
 
     public static File getDataFolder() {
